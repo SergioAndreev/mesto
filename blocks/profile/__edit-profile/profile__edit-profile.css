@@ -1,0 +1,13 @@
+.profile__edit-profile {
+    margin-top: 37px;
+}
+
+@media (max-width: 680px) {
+    .profile__edit-profile {
+        padding: 0;
+        max-width: 18px;
+        max-height: 18px;
+        margin-top: 15px;
+        margin-left: 9px;
+    }
+}
