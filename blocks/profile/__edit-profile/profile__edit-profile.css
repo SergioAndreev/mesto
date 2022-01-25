@@ -1,5 +1,16 @@
 .profile__edit-profile {
     margin-top: 37px;
+    display: flex;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #fff;
+    box-sizing: border-box;
+    cursor: pointer;
+    grid-area: edit-profile;
+    background-image: url("../../../images/icon-edit.svg");
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 @media (max-width: 680px) {
@@ -10,4 +21,8 @@
         margin-top: 15px;
         margin-left: 9px;
     }
+}
+
+.profile__edit-profile:hover {
+    opacity: 0.6;
 }
