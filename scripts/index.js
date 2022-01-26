@@ -10,8 +10,10 @@ let popup = document.querySelector('.popup');
 let buttonClosePopup = document.querySelector('.popup__close-button');
 let buttonOpenPopup = document.querySelector('.profile__edit-profile');
 // Находим поля в Popoup
-let nameInput = document.querySelector('.popup__input_name');
-let jobInput = document.querySelector('.popup__input_job');
+let form = document.forms.popup__form;
+let nameInput = form.elements.user_name;
+let jobInput = form.elements.user_job;
+
 
 // Открываем PopUp
 function openPopup() {
