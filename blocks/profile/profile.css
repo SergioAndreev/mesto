@@ -28,7 +28,7 @@
                 "profile__user-job profile__user-job profile__user-job"
                 "add-button add-button add-button";
         grid-template-columns: 1fr 189px 1fr;
-        grid-template-rows: 140px 1fr 1fr 63px;
+        grid-template-rows: 140px 1fr 1fr 70px;
         max-width: 282px;
     }
 }

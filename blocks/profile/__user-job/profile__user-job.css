@@ -18,7 +18,7 @@
 @media (max-width: 680px) {
     .profile__user-job {
         font-size: 14px;
-        margin: 5px auto 0;
+        margin: 10px auto 0;
         max-width: 282px;
     }
 }
