@@ -73,6 +73,8 @@ const initialCards = [
 // Открываем PopUp
 function openPopup(popup) {
     popup.classList.add('popup_opened');
+    document.addEventListener('mousedown', clickOverlay);
+    document.addEventListener('keydown', pressEscape);
 }
 
 // handler PopupEdit
@@ -93,6 +95,8 @@ function handlerPopupImage(name, link) {
 // Закрываем PopUp
 function closePopup(popup) {
     popup.classList.remove('popup_opened');
+    document.removeEventListener('mousedown', clickOverlay);
+    document.removeEventListener('keydown', pressEscape);
 }
 
 // Обработчик «отправки» формы, хотя пока
@@ -152,6 +156,21 @@ function setEventCard(card, name, link) {
     });
 }
 
+// функция закрытия popup при клике во вне зоны
+function clickOverlay (evt) {
+    const openedPopup = document.querySelector('.popup_opened');
+    if (evt.target === openedPopup) {
+        closePopup(openedPopup);
+    };
+};
+
+// функция закрытия popup при нажатии Esc
+function pressEscape (evt) {
+    if (evt.key === 'Escape') {
+        const openedPopup = document.querySelector('.popup_opened');
+        closePopup(openedPopup);
+    };
+};
 // Прикрепляем обработчик :
 formElement.addEventListener('submit', formSubmitHandler);
 buttonClosePopup.addEventListener('click', () => closePopup(popupEdit));
