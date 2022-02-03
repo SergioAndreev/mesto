@@ -1,11 +1,11 @@
 // Находим форму в DOM
-const formElement = document.querySelector('.popup__form');
+const editFormElement = document.forms.edit__form;
 // Находим поля формы в DOM
 const userName = document.querySelector('.profile__user-name');
 const userJob = document.querySelector('.profile__user-job');
 
 // кнопки открытия попапов
-const buttonOpenPopup = document.querySelector('.profile__edit-profile');
+const buttonOpenEditPopup = document.querySelector('.profile__edit-profile');
 const buttonOpenNewelement = document.querySelector('.profile__add-button');
 
 // Находим  PopoupEdit
@@ -28,9 +28,9 @@ const buttonCloseNewelement = popupNewelement.querySelector('.popup__close-butto
 
 
 // Находим поля в popup__form
-const form = document.forms.popup__form;
-const nameInput = form.elements.user_name;
-const jobInput = form.elements.user_job;
+const editForm = document.forms.edit__form;
+const nameInput = editForm.elements.user_name;
+const jobInput = editForm.elements.user_job;
 
 // Находим элементы формы в в newelement
 const newElementForm = document.forms.newelement__form;
@@ -101,7 +101,7 @@ function closePopup(popup) {
 
 // Обработчик «отправки» формы, хотя пока
 // она никуда отправляться не будет
-    function formSubmitHandler (evt) {
+    function handleSubmitEditForm (evt) {
         evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
         userName.textContent = nameInput.value;
         userJob.textContent = jobInput.value;
@@ -109,14 +109,17 @@ function closePopup(popup) {
     }
 
 // Оброботчик отправки формы нового элемента
-function formElementSubmitHandler (evt) {
+function handleSubmitNewElementForm (evt) {
     evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
 
-    let newCard = {}
+    const newCard = {}
     newCard.name = cardName.value;
     newCard.link = cardUrl.value;
 
     newElementForm.reset();
+    const buttonElement = newElementForm.querySelector('.popup__save-button');
+    buttonElement.classList.add('popup__save-button_disabled');
+    buttonElement.disabled = true;
     elements.prepend(createCard(newCard));
     closePopup(popupElement);
 }
@@ -158,9 +161,8 @@ function setEventCard(card, name, link) {
 
 // функция закрытия popup при клике во вне зоны
 function clickOverlay (evt) {
-    const openedPopup = document.querySelector('.popup_opened');
-    if (evt.target === openedPopup) {
-        closePopup(openedPopup);
+    if (evt.target.classList.contains('popup_opened')) {
+        closePopup(evt.target);
     };
 };
 
@@ -172,9 +174,9 @@ function pressEscape (evt) {
     };
 };
 // Прикрепляем обработчик :
-formElement.addEventListener('submit', formSubmitHandler);
+editFormElement.addEventListener('submit', handleSubmitEditForm);
 buttonClosePopup.addEventListener('click', () => closePopup(popupEdit));
-buttonOpenPopup.addEventListener('click', handlerPopupEdit);
+buttonOpenEditPopup.addEventListener('click', handlerPopupEdit);
 
 // Открытия закрытия нового элемента
 buttonCloseNewelement.addEventListener('click', () => closePopup(popupElement));
@@ -184,7 +186,7 @@ buttonOpenNewelement.addEventListener('click', () => openPopup(popupElement));
 buttonCloseImage.addEventListener('click', () => closePopup(popupImage));
 
 // Обробочик отправки формы
-newElementForm.addEventListener('submit', formElementSubmitHandler);
+newElementForm.addEventListener('submit', handleSubmitNewElementForm);
 
 // Загрузим начальные карточки
 initialCards.forEach((card) => {
