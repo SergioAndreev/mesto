@@ -1,3 +1,23 @@
+import {initialCards} from './initialCards.js';
+import Card from './card.js';
+import FormValidator from "./formValidator.js";
+
+// объект классов Card
+const templateCard = {
+    itemImage: ('.element__photo'),
+    itemTitle: ('.element__title'),
+    likeBtn: ('.element__heart'),
+    deleteBtn: ('.element__delete')
+}
+
+
+// Находим элементы в popup_type_image
+const popupImage = document.querySelector('.popup_type_image');
+const imageUrl = popupImage.querySelector('.popup__image-url');
+const imageName = popupImage.querySelector('.popup__image-name');
+const buttonCloseImage = popupImage.querySelector('.popup__close-button');
+
+
 // Находим форму в DOM
 const editFormElement = document.forms.edit__form;
 // Находим поля формы в DOM
@@ -16,11 +36,6 @@ const popupElement = document.querySelector('.popup_type_element');
 const popupContainer = document.querySelector('.popup__container');
 const buttonClosePopup = popupContainer.querySelector('.popup__close-button');
 
-// Находим элементы в popup_type_image
-const popupImage = document.querySelector('.popup_type_image');
-const imageUrl = popupImage.querySelector('.popup__image-url');
-const imageName = popupImage.querySelector('.popup__image-name');
-const buttonCloseImage = popupImage.querySelector('.popup__close-button');
 
 // Находим кнопки в popup__newelement
 const popupNewelement = document.querySelector('.popup__newelement');
@@ -42,39 +57,24 @@ const cardUrl = newElementForm.elements.card_url;
 const elements = document.querySelector('.elements');
 // шаблон для создания карточек
 const template = document.querySelector('.template');
-// массив с начальными карточками
-const initialCards = [
-    {
-        name: 'Хорватия',
-        link: 'https://images.unsplash.com/photo-1596097155664-4f5c49ba1b69?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80'
-    },
-    {
-        name: 'Испания',
-        link: 'https://images.unsplash.com/photo-1641900833936-02cdb77d7068?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'
-    },
-    {
-        name: 'Голливуд',
-        link: 'https://images.unsplash.com/photo-1641534425566-9e141d1b3b17?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'
-    },
-    {
-        name: 'Индия',
-        link: 'https://images.unsplash.com/photo-1630750967058-18c1707ee95a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'
-    },
-    {
-        name: 'Алтай',
-        link: 'https://images.unsplash.com/photo-1641555130479-473595f33bd2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1331&q=80'
-    },
-    {
-        name: 'Бали',
-        link: 'https://images.unsplash.com/photo-1558347718-b45a32c31c03?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'
-    }
-];
+
+// селекторы вылидации
+const selectors = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__save-button',
+    inactiveButtonClass: 'popup__save-button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+};
 
 // Открываем PopUp
 function openPopup(popup) {
     popup.classList.add('popup_opened');
     document.addEventListener('mousedown', clickOverlay);
     document.addEventListener('keydown', pressEscape);
+    formEditProfileValidator.resetValidation();
+    formAddCardValidator.resetValidation();
 }
 
 // handler PopupEdit
@@ -85,7 +85,7 @@ function handlerPopupEdit() {
 }
 
 // handler popupImage
-function handlerPopupImage(name, link) {
+export  function handlerPopupImage(name, link) {
     imageUrl.src = link;
     imageUrl.alt = name;
     imageName.textContent = name;
@@ -120,44 +120,28 @@ function handleSubmitNewElementForm (evt) {
     const buttonElement = newElementForm.querySelector('.popup__save-button');
     buttonElement.classList.add('popup__save-button_disabled');
     buttonElement.disabled = true;
-    elements.prepend(createCard(newCard));
+    elements.prepend(new Card(newCard, templateCard, '.template').createCard());
     closePopup(popupElement);
 }
 
-function createCard(card) {
-    // создадим карточку
-    const elementTemplate = template.content;
-    const cardElement = elementTemplate.querySelector('.element').cloneNode(true);
 
-    // зададим поля карточки
-    const cardPhoto = cardElement.querySelector('.element__photo');
-    cardPhoto.alt = card.name;
-    cardPhoto.src = card.link;
-    cardElement.querySelector('.element__title').textContent = card.name;
 
-    // Установим эвенты
-    setEventCard(cardElement, card.name, card.link);
-    // добавим карточку в массив
-    // elements.prepend(cardElement);
-    return cardElement
-}
-
-function setEventCard(card, name, link) {
-    // лайк
-    card.querySelector('.element__heart').addEventListener('click', function(evt) {
-        evt.target.classList.toggle('element__heart_active');
-    });
-
-    // удалить карточку
-    card.querySelector('.element__delete').addEventListener('click', () => {
-        card.remove();
-    });
-
-    // открытие карточку
-    card.querySelector('.element__photo').addEventListener('click', () => {
-        handlerPopupImage(name,link);
-    });
-}
+// function setEventCard(card, name, link) {
+//     // лайк
+//     card.querySelector('.element__heart').addEventListener('click', function(evt) {
+//         evt.target.classList.toggle('element__heart_active');
+//     });
+//
+//     // удалить карточку
+//     card.querySelector('.element__delete').addEventListener('click', () => {
+//         card.remove();
+//     });
+//
+//     // открытие карточку
+//     card.querySelector('.element__photo').addEventListener('click', () => {
+//         handlerPopupImage(name,link);
+//     });
+// }
 
 // функция закрытия popup при клике во вне зоны
 function clickOverlay (evt) {
@@ -189,6 +173,13 @@ buttonCloseImage.addEventListener('click', () => closePopup(popupImage));
 newElementForm.addEventListener('submit', handleSubmitNewElementForm);
 
 // Загрузим начальные карточки
-initialCards.forEach((card) => {
-    elements.prepend(createCard(card));
+initialCards.forEach((item) => {
+    elements.prepend(new Card(item, templateCard, '.template').createCard());
 })
+
+//валидация для выбранной формы.
+const formEditProfileValidator = new FormValidator(selectors, popupEdit);
+formEditProfileValidator.enableValidation();
+
+const formAddCardValidator = new FormValidator(selectors, newElementForm);
+formAddCardValidator.enableValidation();
