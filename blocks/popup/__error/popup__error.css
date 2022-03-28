@@ -1,5 +1,6 @@
 .popup__error {
-    display: none;
+    display: block;
+    height: 15px;
     margin-top: 5px;
     color: rgba(255, 0, 0, 1);
     font-style: normal;

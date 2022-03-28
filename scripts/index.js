@@ -1,6 +1,6 @@
-import {initialCards} from './initialCards.js';
-import Card from './card.js';
-import FormValidator from "./formValidator.js";
+import {initialCards} from './InitialCards.js';
+import Card from './Card.js';
+import FormValidator from "./FormValidator.js";
 
 // объект классов Card
 const templateCard = {
@@ -19,7 +19,7 @@ const buttonCloseImage = popupImage.querySelector('.popup__close-button');
 
 
 // Находим форму в DOM
-const editFormElement = document.forms.edit__form;
+const profileEditFormElement = document.forms.edit__form;
 // Находим поля формы в DOM
 const userName = document.querySelector('.profile__user-name');
 const userJob = document.querySelector('.profile__user-job');
@@ -43,9 +43,8 @@ const buttonCloseNewelement = popupNewelement.querySelector('.popup__close-butto
 
 
 // Находим поля в popup__form
-const editForm = document.forms.edit__form;
-const nameInput = editForm.elements.user_name;
-const jobInput = editForm.elements.user_job;
+const nameInput = profileEditFormElement.elements.user_name;
+const jobInput = profileEditFormElement.elements.user_job;
 
 // Находим элементы формы в в newelement
 const newElementForm = document.forms.newelement__form;
@@ -54,7 +53,7 @@ const cardUrl = newElementForm.elements.card_url;
 
 
 // секция отображения карточек
-const elements = document.querySelector('.elements');
+const elementsContainer = document.querySelector('.elements');
 // шаблон для создания карточек
 const template = document.querySelector('.template');
 
@@ -73,19 +72,19 @@ function openPopup(popup) {
     popup.classList.add('popup_opened');
     document.addEventListener('mousedown', clickOverlay);
     document.addEventListener('keydown', pressEscape);
-    formEditProfileValidator.resetValidation();
-    formAddCardValidator.resetValidation();
 }
 
 // handler PopupEdit
 function handlerPopupEdit() {
     nameInput.value = userName.textContent;
     jobInput.value = userJob.textContent;
+    formEditProfileValidator.resetValidation();
+    formAddCardValidator.resetValidation();
     openPopup(popupEdit);
 }
 
 // handler popupImage
-export  function handlerPopupImage(name, link) {
+const handlerPopupImage = function(name, link) {
     imageUrl.src = link;
     imageUrl.alt = name;
     imageName.textContent = name;
@@ -116,12 +115,10 @@ function handleSubmitNewElementForm (evt) {
     newCard.name = cardName.value;
     newCard.link = cardUrl.value;
 
-    newElementForm.reset();
-    const buttonElement = newElementForm.querySelector('.popup__save-button');
-    buttonElement.classList.add('popup__save-button_disabled');
-    buttonElement.disabled = true;
-    elements.prepend(new Card(newCard, templateCard, '.template').createCard());
     closePopup(popupElement);
+    newElementForm.reset();
+    formAddCardValidator.toggleButtonState();
+    elementsContainer.prepend(createCard(newCard));
 }
 
 
@@ -158,13 +155,17 @@ function pressEscape (evt) {
     };
 };
 // Прикрепляем обработчик :
-editFormElement.addEventListener('submit', handleSubmitEditForm);
+profileEditFormElement.addEventListener('submit', handleSubmitEditForm);
 buttonClosePopup.addEventListener('click', () => closePopup(popupEdit));
 buttonOpenEditPopup.addEventListener('click', handlerPopupEdit);
 
 // Открытия закрытия нового элемента
 buttonCloseNewelement.addEventListener('click', () => closePopup(popupElement));
-buttonOpenNewelement.addEventListener('click', () => openPopup(popupElement));
+buttonOpenNewelement.addEventListener('click', () => {
+    openPopup(popupElement)
+    formEditProfileValidator.resetValidation();
+    formAddCardValidator.resetValidation();
+});
 
 // Закрытия popup Image
 buttonCloseImage.addEventListener('click', () => closePopup(popupImage));
@@ -174,7 +175,7 @@ newElementForm.addEventListener('submit', handleSubmitNewElementForm);
 
 // Загрузим начальные карточки
 initialCards.forEach((item) => {
-    elements.prepend(new Card(item, templateCard, '.template').createCard());
+    elementsContainer.prepend(createCard(item));
 })
 
 //валидация для выбранной формы.
@@ -183,3 +184,7 @@ formEditProfileValidator.enableValidation();
 
 const formAddCardValidator = new FormValidator(selectors, newElementForm);
 formAddCardValidator.enableValidation();
+
+function createCard(card) {
+    return new Card(card, templateCard, '.template', handlerPopupImage).createCard()
+}
